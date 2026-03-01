@@ -6,14 +6,17 @@ import com.sam.springbootmall.dto.ProductRequest;
 import com.sam.springbootmall.model.Product;
 import com.sam.springbootmall.service.ProductService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
+@Validated
 @RestController
 public class ProductController {
 
@@ -25,13 +28,17 @@ public class ProductController {
                @RequestParam(required = false) ProductCategory category,
                @RequestParam(required = false) String search,
                @RequestParam(defaultValue = "created_date") String orderBy,
-               @RequestParam(defaultValue = "desc") String sort
+               @RequestParam(defaultValue = "desc") String sort,
+               @RequestParam(defaultValue = "5") @Max(1000) @Min(0) Integer limit,
+               @RequestParam(defaultValue = "0") @Min(0) Integer offset
     ) {
         ProductParms productParms = new ProductParms();
         productParms.setCategory(category);
         productParms.setSearch(search);
         productParms.setOrderBy(orderBy);
         productParms.setSort(sort);
+        productParms.setLimit(limit);
+        productParms.setOffset(offset);
 
         List<Product> productList = productService.getProducts(productParms);
         return ResponseEntity.status(HttpStatus.OK).body(productList);
