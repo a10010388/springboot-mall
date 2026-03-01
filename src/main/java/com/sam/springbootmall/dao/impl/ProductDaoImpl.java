@@ -26,14 +26,7 @@ public class ProductDaoImpl implements ProductDao {
                 " from product  " +
                 " where 1 = 1" ;
         Map<String, Object> params = new HashMap<>();
-        if(productParms.getCategory()!=null){
-            sql = sql + " and category = :productCategory";
-            params.put("productCategory",productParms.getCategory().name());
-        }
-        if(productParms.getSearch()!=null){
-            sql = sql + " and product_name like :search";
-            params.put("search","%"+productParms.getSearch()+"%");
-        }
+        sql = addFilterSql(sql,params,productParms);
 
         sql = sql + " order by " +productParms.getOrderBy() + " " +productParms.getSort();
         sql = sql + " limit :limit offset :offset";
@@ -48,14 +41,8 @@ public class ProductDaoImpl implements ProductDao {
     public Integer countProduct(ProductParms productParms) {
         String sql = "select count(1) from product where 1 = 1" ;
         Map<String, Object> params = new HashMap<>();
-        if(productParms.getCategory()!=null){
-            sql = sql + " and category = :productCategory";
-            params.put("productCategory",productParms.getCategory().name());
-        }
-        if(productParms.getSearch()!=null){
-            sql = sql + " and product_name like :search";
-            params.put("search","%"+productParms.getSearch()+"%");
-        }
+
+        sql = addFilterSql(sql,params,productParms);
         Integer total = namedParameterJdbcTemplate.queryForObject(sql, params, Integer.class);
         return total;
     }
@@ -130,6 +117,19 @@ public class ProductDaoImpl implements ProductDao {
     map.put("productId", productId);
     namedParameterJdbcTemplate.update(sql,map);
 
+    }
+
+    private  String addFilterSql(String sql,Map<String,Object> map,
+                                 ProductParms productParms) {
+        if(productParms.getCategory()!=null){
+            sql = sql + " and category = :productCategory";
+            map.put("productCategory",productParms.getCategory().name());
+        }
+        if(productParms.getSearch()!=null){
+            sql = sql + " and product_name like :search";
+            map.put("search","%"+productParms.getSearch()+"%");
+        }
+        return sql;
     }
 
 
