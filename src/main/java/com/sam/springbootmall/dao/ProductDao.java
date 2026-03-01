@@ -16,5 +16,5 @@ public interface ProductDao {
 
     void deleteProductById(Integer productId);
 
-    List<Product> getProducts(ProductCategory productCategory,String search);
+    List<Product> getProducts(ProductParms productParms);
 }
