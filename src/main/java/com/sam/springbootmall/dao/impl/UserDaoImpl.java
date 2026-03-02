@@ -24,7 +24,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Integer createUser(UserRegisterRequest userRegisterRequest) {
-        String sql = "insert into mall.user (email, password, created_date, last_modified_date)" +
+        String sql = "insert into user (email, password, created_date, last_modified_date)" +
                 "values ( :email, :password, :createdDate, :lastModifiedDate)";
         Map<String, Object> map = new HashMap<>();
         map.put("email", userRegisterRequest.getEmail());
