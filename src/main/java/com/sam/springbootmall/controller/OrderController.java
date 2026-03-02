@@ -1,6 +1,7 @@
 package com.sam.springbootmall.controller;
 
 import com.sam.springbootmall.dto.CreateOrderRequest;
+import com.sam.springbootmall.model.Order;
 import com.sam.springbootmall.service.OrderService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -25,7 +26,7 @@ public class OrderController {
                                          @RequestBody @Valid CreateOrderRequest createOrderRequest) {
         logger.info("userid:"+userId);
         Integer orderId = orderService.createOrder(userId,createOrderRequest);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderId);
+        Order order = orderService.getOrderById(orderId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }
 }
