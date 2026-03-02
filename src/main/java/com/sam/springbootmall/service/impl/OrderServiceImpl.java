@@ -6,11 +6,13 @@ import com.sam.springbootmall.dao.ProductDao;
 import com.sam.springbootmall.dao.UserDao;
 import com.sam.springbootmall.dto.BuyItem;
 import com.sam.springbootmall.dto.CreateOrderRequest;
+import com.sam.springbootmall.dto.OrderQueryParams;
 import com.sam.springbootmall.model.Order;
 import com.sam.springbootmall.model.OrderItem;
 import com.sam.springbootmall.model.Product;
 import com.sam.springbootmall.model.User;
 import com.sam.springbootmall.service.OrderService;
+import com.sam.springbootmall.util.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,5 +88,21 @@ public class OrderServiceImpl implements OrderService {
 
         order.setOrderItemList(orderItemList);
         return order;
+    }
+
+    @Override
+    public Integer countOrder(OrderQueryParams orderQueryParams) {
+        return orderDao.countOrder(orderQueryParams);
+    }
+
+    @Override
+    public List<Order> getOrderList(OrderQueryParams orderQueryParams) {
+        List<Order> orderList = orderDao.getOrders(orderQueryParams);
+        for(Order order : orderList) {
+            List<OrderItem> orderItemList = orderDao.getOrderItemByOrderId(order.getOrderId());
+            order.setOrderItemList(orderItemList);
+        }
+
+        return orderList;
     }
 }

@@ -2,6 +2,7 @@ package com.sam.springbootmall.dao.impl;
 
 import com.sam.springbootmall.controller.OrderController;
 import com.sam.springbootmall.dao.OrderDao;
+import com.sam.springbootmall.dto.OrderQueryParams;
 import com.sam.springbootmall.model.Order;
 import com.sam.springbootmall.model.OrderItem;
 import com.sam.springbootmall.rowmaaper.OrderItemRowMapper;
@@ -92,6 +93,42 @@ public class OrderDaoImpl implements OrderDao {
         List<OrderItem> orderItemList = namedParameterJdbcTemplate.query(sql,map,new OrderItemRowMapper());
 
         return orderItemList;
+    }
+
+    @Override
+    public Integer countOrder(OrderQueryParams orderQueryParams) {
+        String sql = "select count(*) from `order` where 1=1 ";
+        Map<String,Object> map = new HashMap<>();
+
+        sql = addFilterSql(sql,map,orderQueryParams);
+        Integer total = namedParameterJdbcTemplate.queryForObject(sql,map,Integer.class);
+        return total;
+    }
+
+    @Override
+    public List<Order> getOrders(OrderQueryParams orderQueryParams) {
+        String sql = "select order_id, user_id,total_amount ,created_date,last_modified_date" +
+                " from `order` where 1=1 ";
+        Map<String,Object> map = new HashMap<>();
+
+        sql = addFilterSql(sql,map,orderQueryParams);
+
+        sql = sql + " ORDER BY created_date DESC ";
+
+        sql = sql + " LIMIT :limit OFFSET :offset ";
+        map.put("limit", orderQueryParams.getLimit());
+        map.put("offset", orderQueryParams.getOffset());
+        List<Order> orderList = namedParameterJdbcTemplate.query(sql,map,new OrderRowMapper());
+        return orderList;
+
+    }
+
+    private String addFilterSql(String sql,Map<String,Object> map,OrderQueryParams orderQueryParams){
+        if(orderQueryParams!=null){
+            sql = sql + "and user_id = :userId ";
+            map.put("userId", orderQueryParams.getUserId());
+        }
+        return sql;
     }
 
 
